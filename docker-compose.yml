@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Serviço para o banco de dados PostgreSQL
+  db:
+    image: postgres:15
+    container_name: skillstack-db
+    environment:
+      POSTGRES_USER: skillstackuser
+      POSTGRES_PASSWORD: skillstackpassword
+      POSTGRES_DB: skillstackdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Serviço para a aplicação .NET
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skillstack-api
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Username=skillstackuser;Password=skillstackpassword;Database=skillstackdb
+    ports:
+      - "5000:80"  # Ou qualquer porta que sua API use
+    networks:
+      - skillstack-net
+
+# Volumes para persistir os dados do banco PostgreSQL
+volumes:
+  pgdata:
+
+# Definir a rede para comunicação entre containers
+networks:
+  skillstack-net:
+    driver: bridge
