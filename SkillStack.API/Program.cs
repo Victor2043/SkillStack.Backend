@@ -60,20 +60,22 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ApiUser", policy => policy.RequireAuthenticatedUser());
 });
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:4200" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        policy => policy.WithOrigins("http://localhost:4200") // Ajuste conforme necessário
+        policy => policy.WithOrigins(allowedOrigins)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials()); // Permite envio de cookies
+                        .AllowCredentials());
 });
 
 // Injeção de dependências
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddMediatR(typeof(LoginCommand).Assembly);
 
@@ -110,11 +112,13 @@ var app = builder.Build();
 // Middleware de tratamento de exceções
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-// Aplicar migrations automaticamente
-using (var scope = app.Services.CreateScope())
+if (app.Environment.IsDevelopment())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    dbContext.Database.Migrate();
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext.Database.Migrate();
+    }
 }
 
 app.UseCors("AllowAll");
