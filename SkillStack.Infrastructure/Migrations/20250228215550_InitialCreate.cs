@@ -19,7 +19,8 @@ namespace SkillStack.Infrastructure.Migrations
                     UserName = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: false)
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    IsActive = table.Column<bool>(type: "bool", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
