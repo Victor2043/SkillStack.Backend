@@ -1,9 +1,7 @@
 ﻿using MediatR;
 using SkillStack.Application.Interfaces;
 using SkillStack.Application.Commands.RefreshToken;
-using SkillStack.Domain.Entities;
-using System.Threading;
-using System.Threading.Tasks;
+using SkillStack.Core.Interfaces;
 
 namespace SkillStack.Application.Handlers
 {

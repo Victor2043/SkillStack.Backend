@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿
 using SkillStack.Application.Commands.RefreshToken;
 using SkillStack.Domain.Entities;
 
-namespace SkillStack.Application.Interfaces;
+namespace SkillStack.Core.Interfaces;
 
 public interface IAuthService
 {

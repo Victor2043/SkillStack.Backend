@@ -10,7 +10,9 @@ namespace SkillStack.Infrastructure.Persistence
         }
 
         public DbSet<User> Users { get; set; }
-        
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<ActivationToken> ActivationTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()

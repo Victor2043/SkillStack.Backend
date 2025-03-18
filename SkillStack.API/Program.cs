@@ -1,21 +1,21 @@
 using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SkillStack.API.Middleware;
 using SkillStack.Application.Commands.Login;
 using SkillStack.Application.Interfaces;
+using SkillStack.Core.Interfaces;
+using SkillStack.Infrastructure.Interfaces;
 using SkillStack.Infrastructure.Persistence;
 using SkillStack.Infrastructure.Repositories;
 using SkillStack.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração do banco de dados, autenticação JWT e CORS como já feito
-
+// Configuração do banco de dados, autenticação JWT e CORS
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -72,10 +72,12 @@ builder.Services.AddCors(options =>
 });
 
 // Injeção de dependências
-
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IActivationTokenRepository, ActivationTokenRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 builder.Services.AddMediatR(typeof(LoginCommand).Assembly);
 
@@ -108,6 +110,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Configuração para aceitar conexões externas
+//app.Urls.Add("http://0.0.0.0:80");
 
 // Middleware de tratamento de exceções
 app.UseMiddleware<ErrorHandlingMiddleware>();

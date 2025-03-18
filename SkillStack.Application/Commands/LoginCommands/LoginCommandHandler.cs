@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using SkillStack.Application.Commands.RefreshToken;
 using SkillStack.Application.Interfaces;
+using SkillStack.Core.Interfaces;
 
 namespace SkillStack.Application.Commands.Login;
 

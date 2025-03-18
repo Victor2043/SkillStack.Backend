@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SkillStack.Core\SkillStack.Core.csproj" />
     <ProjectReference Include="..\SkillStack.Domain\SkillStack.Domain.csproj" />
   </ItemGroup>
 

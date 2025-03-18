@@ -1,8 +1,9 @@
-﻿namespace SkillStack.Application.Interfaces;
+﻿namespace SkillStack.Core.Interfaces;
 
 public interface IJwtService
 {
     Task<string> GenerateAccessToken(Guid userId, string userName, string email);
     string GenerateRefreshToken();
-    bool ValidateRefreshToken(string refreshToken);
+    Task<string> GenerateActivationToken(Guid userId);
+    Task<Guid?> ValidateActivationToken(string token);
 }
