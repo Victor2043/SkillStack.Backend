@@ -110,7 +110,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Middleware de tratamento de exceções
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -127,7 +126,6 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Swagger para desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
