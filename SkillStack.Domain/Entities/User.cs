@@ -9,3 +9,4 @@ public class User
     public required string PasswordHash { get; set; }
     public bool IsActive { get; set; }
 }
+

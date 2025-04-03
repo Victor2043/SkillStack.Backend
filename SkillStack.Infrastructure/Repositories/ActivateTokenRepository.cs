@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using SkillStack.Domain.Entities;
 using SkillStack.Infrastructure.Interfaces;
 using SkillStack.Infrastructure.Persistence;
@@ -8,10 +12,12 @@ namespace SkillStack.Infrastructure.Repositories
     public class ActivationTokenRepository : IActivationTokenRepository
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ActivationTokenRepository(AppDbContext context)
+        public ActivationTokenRepository(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task StoreTokenAsync(Guid userId, string activationToken, DateTime expiration)

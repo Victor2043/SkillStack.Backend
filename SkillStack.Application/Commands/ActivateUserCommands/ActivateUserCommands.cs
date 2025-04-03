@@ -2,5 +2,8 @@
 
 namespace SkillStack.Application.Commands.ActivateUserCommands
 {
-    public record ActivateUserCommand(string Token) : IRequest<bool>;
+    public class ActivateUserCommand : IRequest<bool>
+    {
+        public string Token { get; set; }
+    }
 }

@@ -15,7 +15,6 @@ using SkillStack.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração do banco de dados, autenticação JWT e CORS
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -71,9 +70,9 @@ builder.Services.AddCors(options =>
                         .AllowCredentials());
 });
 
-// Injeção de dependências
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IActivationTokenRepository, ActivationTokenRepository>();
@@ -110,9 +109,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-
-// Configuração para aceitar conexões externas
-//app.Urls.Add("http://0.0.0.0:80");
 
 // Middleware de tratamento de exceções
 app.UseMiddleware<ErrorHandlingMiddleware>();

@@ -16,13 +16,15 @@ public class EmailService : IEmailService
 
     public async Task SendEmailAsync(string to, string subject, string body)
     {
-        var smtpHost = _configuration["EmailSettings:SmtpHost"];
-        var smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"]);
-        var smtpUser = _configuration["EmailSettings:SmtpUser"];
-        var smtpPass = _configuration["EmailSettings:SmtpPass"];
+        var smtpHost = _configuration["EmailSettings:SmtpServer"];
+        var smtpPort = int.Parse(_configuration["EmailSettings:Port"]);
+        var smtpUser = _configuration["EmailSettings:SenderEmail"];
+        var smtpPass = _configuration["EmailSettings:Password"];
+
 
         using var client = new SmtpClient(smtpHost, smtpPort)
         {
+
             Credentials = new NetworkCredential(smtpUser, smtpPass),
             EnableSsl = true
         };

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillStack.Application.Commands.UserCommands;
 using SkillStack.Application.Commands.ActivateUserCommands;
-using SkillStack.Application.Commands.RefreshToken;
 
 namespace SkillStack.API.Controllers
 {
@@ -17,7 +16,7 @@ namespace SkillStack.API.Controllers
         {
             _mediator = mediator;
         }
-
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] CreateUserCommand command)
         {
@@ -28,11 +27,19 @@ namespace SkillStack.API.Controllers
             return CreatedAtAction(nameof(Register), new { id = user.Id }, user);
         }
 
-        [HttpPost("activate")]
-        public async Task<IActionResult> Activate([FromBody] ActivateUserCommand command)
+        [AllowAnonymous]
+        [HttpGet("activate")]
+        public async Task<IActionResult> Activate([FromQuery] string token)
         {
+            if (string.IsNullOrEmpty(token))
+                return BadRequest(new { message = "Activation token is required." });
+
+            var command = new ActivateUserCommand { Token = token };
             var result = await _mediator.Send(command);
-            return result ? Ok("User activated successfully.") : BadRequest("Invalid or expired token.");
-        }        
+
+            return result
+                ? Ok(new { message = "User activated successfully." })
+                : BadRequest(new { message = "Invalid or expired token." });
+        }
     }
 }

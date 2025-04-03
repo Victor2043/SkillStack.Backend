@@ -2,22 +2,27 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SkillStack.Core.Interfaces;
+using SkillStack.Domain.Entities;
+using SkillStack.Infrastructure.Persistence;
 
 namespace SkillStack.Infrastructure.Services;
 
 public class JwtService : IJwtService
 {
     private readonly IConfiguration _configuration;
+    private readonly AppDbContext _context;
     private static readonly Dictionary<string, string> _refreshTokens = new();
     private readonly string _secretKey;
 
-    public JwtService(IConfiguration configuration)
+    public JwtService(IConfiguration configuration, AppDbContext context)
     {
         _configuration = configuration;
         _secretKey = configuration["Jwt:Secret"] ?? throw new ArgumentNullException("Jwt:Secret is missing");
+        _context = context;
     }
 
     public async Task<string> GenerateAccessToken(Guid userId, string userName, string email)
@@ -69,23 +74,33 @@ public class JwtService : IJwtService
     {
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]);
         var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
+    {
+        new(JwtRegisteredClaimNames.Sub, userId.ToString()),
+        new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(24), // Token de ativação válido por 24h
+            Expires = DateTime.UtcNow.AddHours(24),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"]
         };
-
         var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+
+        var tokenString = tokenHandler.WriteToken(securityToken);
+
+        await _context.ActivationTokens.AddAsync(new ActivationToken
+        {
+            Token = tokenString,  
+            UserId = userId,
+            Expiration = DateTime.UtcNow.AddHours(24)
+        });
+
+        await _context.SaveChangesAsync();
+
+        return tokenString;
     }
 
     public async Task<Guid?> ValidateActivationToken(string token)
