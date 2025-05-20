@@ -23,5 +23,5 @@ RUN dotnet publish "SkillStack.API/SkillStack.API.csproj" -c Release -o /app
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app .
-ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_ENVIRONMENT=Production
 ENTRYPOINT ["dotnet", "SkillStack.API.dll"]
