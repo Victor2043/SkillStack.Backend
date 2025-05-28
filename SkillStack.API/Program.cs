@@ -1,4 +1,6 @@
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SkillStack.API.Middleware;
 using SkillStack.Application.Commands.Login;
+using SkillStack.Application.Commands.LoginCommands;
+using SkillStack.Application.Commands.UserCommands;
 using SkillStack.Application.Interfaces;
 using SkillStack.Core.Interfaces;
 using SkillStack.Infrastructure.Interfaces;
@@ -89,6 +93,11 @@ builder.Services.AddScoped<IActivationTokenRepository, ActivationTokenRepository
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 builder.Services.AddMediatR(typeof(LoginCommand).Assembly);
+
+builder.Services.AddValidatorsFromAssemblyContaining<LoginCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateUserCommandValidator>();
+builder.Services.AddFluentValidationAutoValidation();
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
