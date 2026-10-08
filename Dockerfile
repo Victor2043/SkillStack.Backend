@@ -9,6 +9,8 @@ COPY SkillStack.Application/*.csproj ./SkillStack.Application/
 COPY SkillStack.Core/*.csproj ./SkillStack.Core/
 COPY SkillStack.Domain/*.csproj ./SkillStack.Domain/
 COPY SkillStack.Infrastructure/*.csproj ./SkillStack.Infrastructure/
+COPY Tests/*.csproj ./Tests/
+
 
 # Restaura dependências
 RUN dotnet restore "SkillStack.BackEnd.sln"
