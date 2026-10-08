@@ -87,6 +87,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<MockDataService>();
+builder.Services.AddHttpClient<TelegramNotifierService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IActivationTokenRepository, ActivationTokenRepository>();

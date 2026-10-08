@@ -12,12 +12,13 @@ namespace SkillStack.Infrastructure.Persistence
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<ActivationToken> ActivationTokens { get; set; }
+        public DbSet<Visit> Visits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
-                .IsUnique();
+                .IsUnique();           
         }
     }
 }
